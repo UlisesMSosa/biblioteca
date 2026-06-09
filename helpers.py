@@ -1,6 +1,6 @@
 import requests
 
-def buscar_libros(termino_buscado, tipo_busqueda="titulo"):
+def buscar_libros(termino_buscado, key,tipo_busqueda="titulo"):
     query = termino_buscado.replace(" ", "+")
     
     prefijos = {
@@ -11,7 +11,7 @@ def buscar_libros(termino_buscado, tipo_busqueda="titulo"):
     
     prefijo = prefijos.get(tipo_busqueda, "intitle:")
     
-    url = f"https://www.googleapis.com/books/v1/volumes?q={prefijo}{query}&key=AIzaSyAJ6PqrVIX5ijF1h5v-C60hQmxlgp9oK1I"
+    url = f"https://www.googleapis.com/books/v1/volumes?q={prefijo}{query}&key={key}"
     try:
         response = requests.get(url)
         response.raise_for_status()  
