@@ -29,6 +29,7 @@ def buscar_libros(termino_buscado, tipo_busqueda="titulo"):
             }
             
             books.append(book)
+        return books
         
     except requests.RequestException as e:
         print(f"Request error: {e}")
