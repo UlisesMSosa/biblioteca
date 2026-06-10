@@ -22,12 +22,15 @@ def buscar_libros(termino_buscado, key,tipo_busqueda="titulo"):
         for item in quote_data.get("items", []):
             volume_info = item.get("volumeInfo", {})
             image_links = volume_info.get("imageLinks", {})
-            
+            isbn_list = volume_info.get("industryIdentifiers")                
+
             book = {
                 "titulo": volume_info.get("title", "Sin título"),
                 "autores": volume_info.get("authors", ["Sin autor especificado"]),
                 "descripcion": volume_info.get("description", "Sin descripción"),
-                "imagen": image_links.get("thumbnail", "url_imagen_por_defecto.jpg")
+                "imagen": image_links.get("thumbnail", "/static/errorlibro.png"),
+                "ISBN": isbn_list[1]["identifier"],
+                "paginas": volume_info.get("pageCount", "Numero desconocido")
             }
             
             books.append(book)
@@ -35,18 +38,14 @@ def buscar_libros(termino_buscado, key,tipo_busqueda="titulo"):
         
     except requests.RequestException as e:
         print(f"Request error: {e}")
+        return []
     except (KeyError, ValueError) as e:
         print(f"Data parsing error: {e}")
+        return []
 
 def apology(message, code=400):
-    """Render message as an apology to user."""
 
     def escape(s):
-        """
-        Escape special characters.
-
-        https://github.com/jacebrowning/memegen#special-characters
-        """
         for old, new in [
             ("-", "--"),
             (" ", "-"),
@@ -63,11 +62,6 @@ def apology(message, code=400):
     return render_template("apology.html", top=code, bottom=escape(message)), code   
 
 def login_required(f):
-    """
-    Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
-    """
 
     @wraps(f)
     def decorated_function(*args, **kwargs):

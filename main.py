@@ -28,7 +28,6 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
 @app.route("/")
 @login_required
 def index():
@@ -96,6 +95,27 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    if request.method == "GET":
+        return apology("Error al buscar", 405)
+    
+    else:
+        query = request.form.get("query")
+        tipo = request.form.get("searchType")
+
+        if not query or not tipo:
+            return apology("Error en los terminos de busqueda", 406)
+        
+        libros = buscar_libros(query, API_KEY, tipo)
+
+        if not libros:
+            return apology("Error de busqueda interno")
+
+        return render_template("search.html", libros=libros)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

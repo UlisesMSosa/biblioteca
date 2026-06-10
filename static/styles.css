@@ -193,6 +193,34 @@ a:hover {
   color: var(--gold);
 }
 
+#libros-container .card {
+  font-size: 1.275rem;
+}
+
+#libros-container .card-body {
+  padding: 0.4rem;
+}
+
+#libros-container .card-title {
+  font-size: 1.375rem;
+  margin-bottom: 0.2rem;
+}
+
+#libros-container .card-text {
+  margin-bottom: 0.2rem;
+}
+
+#libros-container .btn {
+  font-size: 1.225rem;
+  padding: 0.15rem 0.4rem;
+}
+
+#libros-container .card-detalle p {
+  font-size: 1.225rem;
+  margin-bottom: 0.2rem;
+  line-height: 1.3;
+}
+
 @media (max-width: 768px) {
   main.container {
     padding: 1.5rem 1rem !important;
