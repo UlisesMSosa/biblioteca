@@ -1,28 +1,6 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<div class="d-flex justify-content-center mt-3">
-    <form class="w-50 bg-dark text-white rounded" role="search" action="/search" method="post" style="padding: 5px;">
-        <div class="input-group">
-            <input class="form-control" type="search" name="query" placeholder="Buscar libro o autor..." aria-label="Search">
-            <button class="btn btn-outline-primary" type="submit">Buscar</button>
-        </div>
-        <div class="d-flex justify-content-start gap-3 mt-2">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="searchType" id="radioTitulo" value="titulo" checked>
-                <label class="form-check-label" for="radioTitulo">Titulo</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="searchType" id="radioAutor" value="autor">
-                <label class="form-check-label" for="radioAutor">Autor</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="searchType" id="radioGenero" value="genero">
-                <label class="form-check-label" for="radioGenero">Genero</label>
-            </div>
-        </div>
-    </form>
-</div>
 <div id="libros-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-3 align-items-start">
     
 </div>

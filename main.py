@@ -105,12 +105,13 @@ def search():
     else:
         query = request.form.get("query")
         tipo = request.form.get("searchType")
+        print(tipo)
 
         if not query or not tipo:
             return apology("Error en los terminos de busqueda", 406)
         
         libros = buscar_libros(query, API_KEY, tipo)
-
+        print(libros)
         if not libros:
             return apology("Error de busqueda interno")
 
