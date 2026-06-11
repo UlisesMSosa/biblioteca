@@ -111,7 +111,6 @@ def search():
             return apology("Error en los terminos de busqueda", 406)
         
         libros = buscar_libros(query, API_KEY, tipo)
-        print(libros)
         if not libros:
             return apology("Error de busqueda interno")
 

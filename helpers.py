@@ -2,39 +2,43 @@ import requests
 from flask import redirect, render_template, session
 from functools import wraps
 
-def buscar_libros(termino_buscado, key,tipo_busqueda="titulo"):
-    query = termino_buscado.replace(" ", "+")
-    
-    prefijos = {
-        "titulo": "intitle:",
-        "autor": "inauthor:",
-        "genero": "subject:"
-    }
-    
-    prefijo = prefijos.get(tipo_busqueda, "intitle:")
-    
-    url = f"https://www.googleapis.com/books/v1/volumes?q={prefijo}{query}&key={key}"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  
-        quote_data = response.json()
-        books = []
-        for item in quote_data.get("items", []):
-            volume_info = item.get("volumeInfo", {})
-            image_links = volume_info.get("imageLinks", {})
-            isbn_list = volume_info.get("industryIdentifiers")                
+def buscar_libros(titulo=None, autor=None, genero=None):
+    search_url = "https://openlibrary.org/search.json"
+    query_parts = []
+    if titulo:
+        query_parts.append(f"title:{titulo}")
 
-            book = {
-                "titulo": volume_info.get("title", "Sin título"),
-                "autores": volume_info.get("authors", ["Sin autor especificado"]),
-                "descripcion": volume_info.get("description", "Sin descripción"),
-                "imagen": image_links.get("thumbnail", "/static/errorlibro.png"),
-                "ISBN": isbn_list[1]["identifier"],
-                "paginas": volume_info.get("pageCount", "Numero desconocido")
+    if autor:
+        query_parts.append(f"author:{autor}")
+
+    if genero:
+        query_parts.append(f"subject:{genero}")
+
+    query = " ".join(query_parts)
+    try:
+        response = requests.get(search_url, params={"q": query})
+        data = response.json()
+        if not data["docs"]: return None
+        resultados = data["docs"]
+        libros = []
+
+        for resultado in resultados:
+            libro = {
+                "key": resultado.get("key"),
+                "titulo": resultado.get("title"),
+                "autor": ", ".join(resultado.get("author_name", [])),
+                "anio": resultado.get("first_publish_year"),
+                "descripcion": "No hay descripción disponible.",
+                "portada": None
             }
-            
-            books.append(book)
-        return books
+            cover_id = resultado.get("cover_i")
+            if cover_id:
+                libro["portada"] = (f"https://covers.openlibrary.org/b/id/{cover_id}-M.jpg")
+
+            libros.append(libro)
+        
+        print(libros)
+        return libros
         
     except requests.RequestException as e:
         print(f"Request error: {e}")
@@ -70,3 +74,5 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+buscar_libros(None, None, "Fantasy")

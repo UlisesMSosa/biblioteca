@@ -15,7 +15,7 @@
                             <div class="card-body d-flex flex-column">
                                 <h6 class="card-title mb-1">{{libro.titulo}}</h6>
                                 <p class="card-text mb-2 small">{{libro.autores | join(", ")}}</p>
-                                <button class="btn btn-primary btn-sm mt-auto align-self-start" onclick="mostrarDetalle({{loop.index}})">Ver descripción</button>
+                                <button class="btn btn-primary btn-sm mt-auto align-self-start" data-id="{{loop.index}}" data-action="detalle">Ver descripción</button>
                             </div>
                         </div>
                     </div>
@@ -26,7 +26,7 @@
                         <p class="mb-1"><strong>Descripción:</strong> {{libro.descripcion}}</p>
                         <p class="mb-1"><strong>Páginas:</strong> {{libro.paginas}}</p>
                         <p class="mb-1"><strong>ISBN:</strong> {{libro.ISBN}}</p>
-                        <button class="btn btn-outline-secondary btn-sm mt-2" onclick="mostrarInicial({{loop.index}})">Volver</button>
+                        <button class="btn btn-outline-secondary btn-sm mt-2" data-id="{{loop.index}}" data-action="inicial">Volver</button>
                     </div>
                 </div>
             </div>
@@ -37,14 +37,17 @@
 
 {% block scripts %}
 <script>
-function mostrarDetalle(id) {
-    document.getElementById('inicial-' + id).classList.add('d-none');
-    document.getElementById('detalle-' + id).classList.remove('d-none');
-}
-
-function mostrarInicial(id) {
-    document.getElementById('detalle-' + id).classList.add('d-none');
-    document.getElementById('inicial-' + id).classList.remove('d-none');
-}
+document.getElementById('libros-container').addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-id]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (btn.dataset.action === 'detalle') {
+        document.getElementById('inicial-' + id).classList.add('d-none');
+        document.getElementById('detalle-' + id).classList.remove('d-none');
+    } else if (btn.dataset.action === 'inicial') {
+        document.getElementById('detalle-' + id).classList.add('d-none');
+        document.getElementById('inicial-' + id).classList.remove('d-none');
+    }
+});
 </script>
 {% endblock %}

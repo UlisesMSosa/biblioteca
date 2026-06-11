@@ -212,6 +212,37 @@ a:hover {
   line-height: 1.3;
 }
 
+nav[aria-label="Biblioteca"] {
+  background: #252a2b;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+nav[aria-label="Biblioteca"] a {
+  color: #a8b9bf;
+  font-size: 1.125rem;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  flex: 1;
+  text-align: center;
+  border-left: 1px solid #a8b9bf;
+  border-right: 1px solid #a8b9bf;
+}
+
+nav[aria-label="Biblioteca"] a:hover {
+  color: #040405;
+  background: #467f86;
+}
+
+nav[aria-label="Biblioteca"] a:first-child {
+  border-left: none;
+}
+
+nav[aria-label="Biblioteca"] a:last-child {
+  border-right: none;
+}
+
 @media (max-width: 768px) {
   main {
     padding: 1.5rem 1rem !important;
