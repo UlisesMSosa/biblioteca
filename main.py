@@ -51,7 +51,6 @@ def register():
             return apology("Passwords don't mach")
         
         hash = generate_password_hash(password)
-        print(hash)
 
         try:
             db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", username, hash)
@@ -105,12 +104,19 @@ def search():
     else:
         query = request.form.get("query")
         tipo = request.form.get("searchType")
-        print(tipo)
+        libros = None
 
         if not query or not tipo:
             return apology("Error en los terminos de busqueda", 406)
         
-        libros = buscar_libros(query, API_KEY, tipo)
+        if tipo == "titulo":
+            libros = buscar_libros(query, None, None)
+        elif tipo == "autor":
+            libros = buscar_libros(None, query, None)
+        elif tipo == "genero":
+            libros = buscar_libros(None, None, query)
+        print(libros)
+        
         if not libros:
             return apology("Error de busqueda interno")
 

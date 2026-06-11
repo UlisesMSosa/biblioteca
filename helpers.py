@@ -16,9 +16,14 @@ def buscar_libros(titulo=None, autor=None, genero=None):
 
     query = " ".join(query_parts)
     try:
-        response = requests.get(search_url, params={"q": query})
+        response = requests.get(search_url, params={
+            "q": f"{query} language:spa",
+            "lang": "es",
+            "fields": "key,title,author_name,first_publish_year,cover_i"
+        })
         data = response.json()
-        if not data["docs"]: return None
+        if not data.get("docs"):
+            return None
         resultados = data["docs"]
         libros = []
 
@@ -29,7 +34,7 @@ def buscar_libros(titulo=None, autor=None, genero=None):
                 "autor": ", ".join(resultado.get("author_name", [])),
                 "anio": resultado.get("first_publish_year"),
                 "descripcion": "No hay descripción disponible.",
-                "portada": None
+                "portada": "/static/errorlibro.png"
             }
             cover_id = resultado.get("cover_i")
             if cover_id:
@@ -37,7 +42,6 @@ def buscar_libros(titulo=None, autor=None, genero=None):
 
             libros.append(libro)
         
-        print(libros)
         return libros
         
     except requests.RequestException as e:
@@ -74,5 +78,3 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
-
-buscar_libros(None, None, "Fantasy")
