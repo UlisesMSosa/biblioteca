@@ -1,7 +1,7 @@
 import os
 from cs50 import SQL
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -53,7 +53,7 @@ def register():
         hash = generate_password_hash(password)
 
         try:
-            db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", username, hash)
+            db.execute("INSERT INTO usuarios (username, hash) VALUES (?, ?);", username, hash)
             return redirect("/")
         except ValueError:
             return apology("Username already in use")
@@ -70,7 +70,7 @@ def login():
             return apology("must provide password", 403)
 
         rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
+            "SELECT * FROM usuarios WHERE username = ?", request.form.get("username")
         )
 
         if len(rows) != 1 or not check_password_hash(
@@ -115,7 +115,6 @@ def search():
             libros = buscar_libros(None, query, None)
         elif tipo == "genero":
             libros = buscar_libros(None, None, query)
-        print(libros)
         
         if not libros:
             return apology("Error de busqueda interno")
@@ -131,9 +130,40 @@ def biblioteca():
     if estado:
         libros = filtrar_por_estado(usuario, estado)
     else:
-        libros = obetener_todos(usuario)
+        libros = obtener_todos(usuario)
     
     return render_template("/biblioteca", libros=libros)
+
+@app.route("/agregar-libro", methods=["POST"])
+@login_required
+def agregar_libro():
+
+    data = request.get_json()
+
+    key = data["key"]
+    titulo = data["titulo"]
+    autor = data["autor"]
+    portada = data["portada"]
+    estado = data["estado"]
+
+  
+
+    libro = db.execute("SELECT id_libro FROM libros WHERE id_libro = ?", key)
+    if not libro:     
+        db.execute("""
+            INSERT INTO libros
+            (id_libro, titulo, autor, portada)
+            VALUES (?, ?, ?, ?)
+        """, key, titulo, autor, portada)
+    db.execute("""
+            INSERT INTO biblioteca_usuario
+            (id_usuario, id_libro, estado)
+            VALUES (?, ?, ?)
+            ON CONFLICT(id_usuario, id_libro)
+            DO UPDATE SET estado = excluded.estado
+        """, session["user_id"], key, estado)
+
+    return jsonify({"ok": True})
 
 if __name__ == '__app__':
     app.run(debug=True, port=5000)
