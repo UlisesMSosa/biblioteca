@@ -2,10 +2,10 @@
 
 {% block main %}
 <nav aria-label="Biblioteca">
-    <a href="/library">Todos</a>
-    <a href="/library/reading">En progreso</a>
-    <a href="/library/completed">Terminados</a>
-    <a href="/library/wishlist">Deseados</a>
+    <a href="/biblioteca">Todos</a>
+    <a href="/biblioteca?estado=en-progreso">En progreso</a>
+    <a href="/biblioteca?estado=terminado">Terminados</a>
+    <a href="/biblioteca?estado=deseado">Deseados</a>
 </nav>
 <div id="libros-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-3 align-items-start">
     

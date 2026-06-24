@@ -5,7 +5,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import buscar_libros, apology, login_required
+from helpers import buscar_libros, apology, login_required, filtrar_por_estado, obtener_todos
 
 
 app = Flask(__name__)
@@ -78,7 +78,7 @@ def login():
         ):
             return apology("invalid username and/or password", 403)
 
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0]["id_usuario"]
 
         return redirect("/")
 
@@ -122,6 +122,18 @@ def search():
 
         return render_template("search.html", libros=libros)
 
+@app.route("/biblioteca")
+@login_required
+def biblioteca():
+    estado = request.args.get("estado")
+    usuario = session["user_id"]
 
-if __name__ == '__main__':
+    if estado:
+        libros = filtrar_por_estado(usuario, estado)
+    else:
+        libros = obetener_todos(usuario)
+    
+    return render_template("/biblioteca", libros=libros)
+
+if __name__ == '__app__':
     app.run(debug=True, port=5000)

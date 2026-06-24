@@ -1,6 +1,9 @@
-import requests
+from cs50 import SQL
 from flask import redirect, render_template, session
 from functools import wraps
+import requests
+
+db = SQL("sqlite:///biblioteca.db")
 
 def buscar_libros(titulo=None, autor=None, genero=None):
     search_url = "https://openlibrary.org/search.json"
@@ -78,3 +81,36 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def filtrar_por_estado(usuario,estado):
+    libros = db.execute("""
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.autor,
+                l.descripcion,
+                b.estado
+            FROM biblioteca_usuario b
+            JOIN libros l
+                ON b.id_libro = l.id_libro
+            WHERE b.id_usuario = ?
+            AND b.estado = ?
+        """, usuario, estado)
+
+    return libros
+
+def obtener_todos(usuario):
+    libros = db.execute("""
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.autor,
+                l.descripcion,
+                b.estado
+            FROM biblioteca_usuario b
+            JOIN libros l
+                ON b.id_libro = l.id_libro
+            WHERE b.id_usuario = ?
+        """, usuario)
+    
+    return libros
